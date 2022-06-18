@@ -12,7 +12,6 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *detailView;
 @property (weak, nonatomic) IBOutlet UILabel *labelDetailPage;
 @property (weak, nonatomic) IBOutlet UILabel *synopsisDetailPage;
-@property (weak, nonatomic) IBOutlet UIImageView *posterPic2;
 @property (weak, nonatomic) IBOutlet UIImageView *posterPic3;
 
 
@@ -30,7 +29,6 @@
     NSString *fullPosterURLString = [baseURLString stringByAppendingString:posterURLString];
     
     NSURL *posterURL = [NSURL URLWithString:fullPosterURLString];
-    [self.posterPic2 setImageWithURL:posterURL];
     [self.posterPic3 setImageWithURL:posterURL];
     // Do any additional setup after loading the view.
 }

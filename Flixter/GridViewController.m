@@ -8,11 +8,15 @@
 #import "GridViewController.h"
 #import "CollectionViewGridCell.h"
 #import "UIImageView+AFNetworking.h"
+#import "DetailsViewController.h"
 
-@interface GridViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface GridViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
+
 @property (nonatomic, strong) NSArray *myArray;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
+@property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *flowLayout;
 
 @end
 
@@ -25,6 +29,23 @@
     // Do any additional setup after loading the view.
     [self fetchMovies];
     
+}
+
+- (void)viewDidLayoutSubviews {
+   [super viewDidLayoutSubviews];
+
+    self.flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    self.flowLayout.minimumLineSpacing = 15;
+    self.flowLayout.minimumInteritemSpacing = 0;
+    self.flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
+    int totalwidth = self.collectionView.bounds.size.width;
+    int numberOfCellsPerRow = 3;
+    int dimensions = (CGFloat)(totalwidth / numberOfCellsPerRow);
+
+    return CGSizeMake(dimensions, dimensions);
 }
 
 - (void) fetchMovies {
@@ -63,8 +84,8 @@
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CollectionViewGridCell *cell = [collectionView dequeueReusableCellWithIdentifier:@"CollectionViewGridCell" forIndexPath:indexPath];
-    
+
+    CollectionViewGridCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CollectionViewGridCell" forIndexPath:indexPath];
     NSDictionary *movie = self.myArray[indexPath.row];
     NSString *baseURLString = @"https://image.tmdb.org/t/p/w500";
     NSString *posterURLString = movie[@"poster_path"];
@@ -74,14 +95,17 @@
     [cell.imageCell setImageWithURL:posterURL];
     return cell;
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+//#pragma mark - Navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ //     Get the new view controller using [segue destinationViewController].
+ //     Pass the selected object to the new view controller.
+     //TableViewCell *cell = (TableViewCell *) sender;
+     NSIndexPath *myIndexPath = [self.collectionView indexPathForCell:sender];
+    
+     NSDictionary *dataToPass = self.myArray[myIndexPath.row];
+     DetailsViewController *detailVC = [segue destinationViewController];
+     detailVC.detailDict = dataToPass;
+ }
 
 @end
